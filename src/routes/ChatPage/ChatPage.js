@@ -1,7 +1,8 @@
 import React from "react";
+import Layout from "../../commons/components/Layout";
 
 const ChatPage = () => {
-  return <div></div>;
+  return <Layout></Layout>;
 };
 
 export default ChatPage;

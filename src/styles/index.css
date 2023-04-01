@@ -1,0 +1,103 @@
+/* Neo둥근모 */
+@import url("//cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css");
+
+:root {
+  --point-color: #41f481;
+}
+
+* {
+  margin: 0;
+  font-family: "NeoDunggeunmo", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: black;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+h2 {
+  text-align: center;
+}
+
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  background-color: transparent;
+}
+a:hover {
+  text-decoration-line: underline;
+  background-color: var(--point-color);
+  color: black;
+}
+a:link,
+a:visited {
+  color: inherit;
+}
+a:link:hover,
+a:visited:hover {
+  color: black;
+}
+
+/* RESET Input */
+input {
+  box-shadow: none;
+  border: none;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+/* IE10 이상에서 input box에 추가된 지우기 버튼 제거 */
+input::-ms-clear {
+  display: none;
+}
+/* input type number 에서 화살표 제거 */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-out-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* select box 스타일 초기화 */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+/* IE에서 Select box 화살표 제거 */
+select::-ms-expand {
+  display: none;
+}
+/*Firefox에서 input number 화살표 없애기*/
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -mox-appearance: none;
+  appearance: none;
+}
+
+button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
