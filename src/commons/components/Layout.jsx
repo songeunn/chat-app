@@ -72,7 +72,7 @@ const Header = styled.header`
     cursor: pointer;
   }
   h2 {
-    font-size: 22px;
+    font-size: 20px;
   }
 `;
 

@@ -2,6 +2,7 @@ import React from "react";
 import Layout from "./commons/components/Layout";
 import styled from "styled-components";
 import router from "./routes/router";
+import { Link } from "react-router-dom";
 
 const App = () => {
   return (
@@ -11,7 +12,7 @@ const App = () => {
           {router.routes.map((route, idx) =>
             route.path === "/" ? null : (
               <li key={idx}>
-                <a href={route.path}>▶️ {route.name}</a>
+                <Link to={route.path}>▶️ {route.name}</Link>
               </li>
             )
           )}
