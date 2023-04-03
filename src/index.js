@@ -3,27 +3,13 @@ import ReactDOM from "react-dom/client";
 import "./styles/index.css";
 import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware } from "redux";
-import promiseMiddleware from "redux-promise";
-import ReduxThunk from "redux-thunk";
-import Reducer from "./redux/reducers";
 import router from "./routes/router";
-
-const createStoreWithMiddleWare = applyMiddleware(
-  promiseMiddleware,
-  ReduxThunk
-)(createStore);
+import store from "./app/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider
-      store={createStoreWithMiddleWare(
-        Reducer,
-        window.__REDUX_DEVTOOLS_EXTENSION__ &&
-          window.__REDUX_DEVTOOLS_EXTENSION__()
-      )}
-    >
+    <Provider store={store}>
       <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>

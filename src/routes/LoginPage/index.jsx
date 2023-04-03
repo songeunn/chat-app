@@ -1,15 +1,15 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import Layout from "../../components/Layout";
 import styled from "styled-components";
 import { OutlinedButton } from "../../components/Button";
 import { useForm } from "react-hook-form";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import BasicHeader from "../../components/BasicHeader";
 
 const LoginPage = () => {
   const {
     register,
-    watch,
     formState: { errors },
     handleSubmit,
   } = useForm();
@@ -45,6 +45,7 @@ const LoginPage = () => {
 
   return (
     <Layout>
+      <BasicHeader pageName="로그인" />
       <Wrapper>
         <FormLayout>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -105,9 +106,11 @@ const Wrapper = styled.section`
 
 const FormLayout = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   span.error {
+    display: block;
     color: var(--error-color);
     font-size: 13px;
   }

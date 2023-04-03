@@ -1,18 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
-import ChatPage from "./ChatPage/ChatPage";
-import LoginPage from "./LoginPage/LoginPage";
-import RegisterPage from "./RegisterPage/RegisterPage";
+import ChatPage from "./ChatPage";
+import LoginPage from "./LoginPage";
+import SignupPage from "./SignupPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    name: "메인",
+    name: "",
   },
   {
-    path: "/register",
-    element: <RegisterPage />,
+    path: "/signup",
+    element: <SignupPage />,
     name: "회원가입",
   },
   {
