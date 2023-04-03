@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import "firebase/auth";
 import "firebase/database";
+import { getDatabase } from "firebase/database";
 import "firebase/storage";
 
 // import { getAnalytics } from "firebase/analytics";
@@ -19,6 +20,7 @@ const firebaseConfig = {
   messagingSenderId: process.env.REACT_APP_messagingSenderId,
   appId: process.env.REACT_APP_appId,
   measurementId: process.env.REACT_APP_measurementId,
+  databaseURL: process.env.REACT_APP_databaseURL,
 };
 
 // Initialize Firebase
@@ -26,3 +28,4 @@ const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
 export const auth = getAuth(app);
+export const database = getDatabase(app);

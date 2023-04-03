@@ -3,6 +3,7 @@
 
 :root {
   --point-color: #41f481;
+  --error-color: #e90b0b;
 }
 
 * {
@@ -107,4 +108,6 @@ button {
   border: none;
   background-color: transparent;
   cursor: pointer;
+  padding-inline: 10px;
+  padding-block: 5px;
 }

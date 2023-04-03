@@ -1,28 +1,96 @@
-import React, { useLayoutEffect, useRef } from "react";
-import Layout from "../../commons/components/Layout";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import Layout from "../../components/Layout";
 import styled from "styled-components";
+import { OutlinedButton } from "../../components/Button";
+import { useForm } from "react-hook-form";
+import { auth } from "../../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginPage = () => {
-  const idRef = useRef(null);
+  const {
+    register,
+    watch,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+  const [loading, setLoading] = useState(false);
+  const [errorFromSubmit, setErrorFromSubmit] = useState("");
 
-  useLayoutEffect(() => {
-    if (idRef.current !== null) idRef.current.focus();
-  }, []);
+  let notUser;
+  let wrongPw;
+  let manyFailed;
+  if (errorFromSubmit) {
+    notUser = !!(errorFromSubmit === "Firebase: Error (auth/user-not-found).");
+    wrongPw = !!(errorFromSubmit === "Firebase: Error (auth/wrong-password).");
+    manyFailed = !!(
+      errorFromSubmit ===
+      "Firebase: Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. (auth/too-many-requests)."
+    );
+  }
+
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+      setLoading(false);
+      console.log("로그인 성공");
+    } catch (error) {
+      setErrorFromSubmit(error.message);
+      setLoading(false);
+      setTimeout(() => {
+        setErrorFromSubmit("");
+      }, 5000);
+    }
+  };
 
   return (
     <Layout>
       <Wrapper>
-        <form>
-          <div className="inputWrapper">
+        <FormLayout>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* 이메일 */}
             <input
-              type="text"
-              placeholder="아이디를 입력해주세요"
-              ref={idRef}
+              type="email"
+              placeholder="이메일"
+              {...register("email", {
+                required: true,
+                pattern: /^\S+@\S+$/i,
+              })}
             />
-            <input type="password" placeholder="비밀번호를 입력해주세요" />
-          </div>
-          <button type="submit">로그인</button>
-        </form>
+            {errors.email && (
+              <span className="error">이메일을 입력해주세요</span>
+            )}
+
+            {/* 비밀번호 */}
+            <input
+              type="password"
+              placeholder="비밀번호"
+              {...register("password", { required: true, minLength: 6 })}
+            />
+            {errors.password && errors.password.type === "required" && (
+              <span className="error">비밀번호를 입력해주세요</span>
+            )}
+            {errors.password && errors.password.type === "minLength" && (
+              <span className="error">
+                비밀번호는 최소 6자 이상이어야 합니다
+              </span>
+            )}
+
+            {/* 로그인 실패 */}
+            {errorFromSubmit && (notUser || wrongPw) && (
+              <span className="error">로그인 정보를 확인해주세요</span>
+            )}
+            {errorFromSubmit && manyFailed && (
+              <span className="error">
+                로그인 실패 제한초과되어 일시적으로 계정이 비활성화 되었습니다.
+                나중에 다시 시도해주세요
+              </span>
+            )}
+            <OutlinedButton type="submit" disabled={loading}>
+              로그인
+            </OutlinedButton>
+          </form>
+        </FormLayout>
       </Wrapper>
     </Layout>
   );
@@ -32,39 +100,27 @@ const Wrapper = styled.section`
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: center;
+`;
 
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    .inputWrapper {
-      display: flex;
-      flex-direction: column;
-      margin: 45px 0;
-      gap: 20px;
-    }
-
-    input {
-      width: 200px;
-      height: 40px;
-      font-size: 15px;
-      color: var(--point-color);
-    }
-
-    button {
-      background-color: var(--point-color);
-      border: 1px solid black;
-      padding-inline: 10px;
-      padding-block: 5px;
-      &:hover {
-        background-color: black;
-        border: 1px solid var(--point-color);
-        color: var(--point-color);
-      }
-    }
+const FormLayout = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span.error {
+    color: var(--error-color);
+    font-size: 13px;
+  }
+  input {
+    display: block;
+    width: 100%;
+    height: 40px;
+    font-size: 15px;
+    color: var(--point-color);
+  }
+  button {
+    display: block;
+    margin: 25px auto 0;
   }
 `;
 

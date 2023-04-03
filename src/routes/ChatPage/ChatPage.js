@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../../commons/components/Layout";
+import Layout from "../../components/Layout";
 
 const ChatPage = () => {
   return <Layout></Layout>;
