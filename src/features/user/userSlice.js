@@ -12,9 +12,19 @@ const userSlice = createSlice({
       state.isLoading = false;
       return state;
     },
+    clearUser: (state) => {
+      state.currentUser = null;
+      state.isLoading = false;
+      return state;
+    },
+    setPhotoURL: (state, action) => {
+      state.currentUser.photoURL = action.payload;
+      state.isLoading = false;
+      return state;
+    },
   },
 });
 
-export const { setUser } = userSlice.actions;
+export const { setUser, clearUser, setPhotoURL } = userSlice.actions;
 
 export default userSlice.reducer;

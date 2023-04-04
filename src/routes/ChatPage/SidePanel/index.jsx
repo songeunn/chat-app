@@ -1,24 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import LogoutButton from "../../../components/LogoutButton";
 import ContentList from "../../../components/ContentList";
 import ContentTitle from "../../../components/ContentTitle";
 import ContentLayout from "../../../components/ContentLayout";
 import { useSelector } from "react-redux";
+import Dropdown from "../../../components/Dropdown";
+import DropdownItem from "../../../components/DropdownItem";
+import { useNavigate } from "react-router-dom";
 
 const SidePanel = () => {
+  const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate("/");
+    }
+  }, [currentUser, navigate]);
 
   return (
     <Container>
       <UserInfo onClick={() => setActive(!active)}>
-        {currentUser.displayName}▾
-        <ul className={active ? `dropdown active` : `dropdown`}>
-          <li>
-            <LogoutButton>로그아웃</LogoutButton>
-          </li>
-        </ul>
+        <>
+          {/* <img src={currentUser && currentUser.photoURL} alt="avatar" /> */}
+          {currentUser && currentUser.displayName}▾
+        </>
+        <Dropdown active={active}>
+          <DropdownItem>
+            <LogoutButton />
+          </DropdownItem>
+        </Dropdown>
       </UserInfo>
       <Favorite>
         <ContentTitle>Favorite</ContentTitle>
@@ -68,15 +81,9 @@ const UserInfo = styled.section`
   font-size: 14px;
   text-align: center;
   cursor: pointer;
-  ul.dropdown {
-    display: none;
-    margin-top: 5px;
-  }
-  ul.active {
-    display: block;
-  }
-  li {
-    padding: 0;
+  img {
+    width: 10px;
+    margin-right: 5px;
   }
 `;
 

@@ -13,7 +13,6 @@ const App = (props) => {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log("user", user);
       // 로그인된 유저
       if (user) {
         navigate("/chat");
@@ -27,7 +26,10 @@ const App = (props) => {
   return (
     <Layout>
       <Wrapper>
-        <div>CHAT APP 로고</div>
+        <Logo>
+          <img src="/images/logo.png" alt="logo" />
+          <h2>PIXEL CHAT</h2>
+        </Logo>
         <ul>
           <li>
             <Link to="/signup">▶️ 회원가입</Link>
@@ -60,4 +62,14 @@ const Wrapper = styled.section`
   }
 `;
 
+const Logo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  img {
+    width: 50px;
+  }
+`;
 export default App;

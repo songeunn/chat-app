@@ -33,7 +33,6 @@ const LoginPage = () => {
       setLoading(true);
       await signInWithEmailAndPassword(auth, data.email, data.password);
       setLoading(false);
-      console.log("로그인 성공");
     } catch (error) {
       setErrorFromSubmit(error.message);
       setLoading(false);

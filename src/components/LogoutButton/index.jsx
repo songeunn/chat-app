@@ -1,15 +1,25 @@
 import React from "react";
 import styled from "styled-components";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase";
+import { useDispatch } from "react-redux";
+import { clearUser } from "../../features/user/userSlice";
 
-const LogoutButton = ({ children }) => {
-  return <Button>{children}</Button>;
+const LogoutButton = () => {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(clearUser());
+    signOut(auth);
+  };
+  return <Button onClick={handleLogout}>로그아웃</Button>;
 };
 
 const Button = styled.button`
   width: 100%;
+  padding: 0;
   color: var(--point-color);
   &:hover {
-    background-color: var(--point-color);
     color: black;
   }
 `;

@@ -3,7 +3,7 @@
 
 :root {
   --point-color: #41f481;
-  /* --point-color: #454545; */
+  --point-color: #6b4661;
   --error-color: #e90b0b;
 }
 
@@ -63,6 +63,8 @@ input {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  color: var(--point-color);
+  padding: 0;
 }
 input:focus {
   outline: none;
@@ -85,6 +87,22 @@ input[type="number"]::-webkit-out-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+textarea {
+  box-shadow: none;
+  border: none;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  resize: none;
+  color: var(--point-color);
+  padding: 0;
+}
+textarea:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 /* select box 스타일 초기화 */
@@ -111,4 +129,5 @@ button {
   cursor: pointer;
   padding-inline: 10px;
   padding-block: 5px;
+  color: var(--point-color);
 }
