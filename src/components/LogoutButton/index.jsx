@@ -17,7 +17,7 @@ const LogoutButton = () => {
 
 const Button = styled.button`
   width: 100%;
-  padding: 0;
+  padding: 4px;
   color: var(--point-color);
   &:hover {
     color: black;

@@ -15,9 +15,12 @@ const ListContainer = styled.section`
   ul {
     display: flex;
     flex-direction: column;
-    gap: 10px;
     li {
       cursor: pointer;
+      padding: 7px 10px;
+      &.noData {
+        text-align: center;
+      }
       &:hover {
         background-color: var(--point-color);
         color: black;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import ContentTitle from "../../../components/ContentTitle";
 import ContentList from "../../../components/ContentList";
@@ -12,9 +12,10 @@ import {
   OutlinedTxtArea,
   Title,
 } from "../../../components/Inline";
-import { useSelector } from "react-redux";
-import { ref, onValue, push, child, update } from "firebase/database";
+import { useDispatch, useSelector } from "react-redux";
+import { ref, push, child, update, onChildAdded, off } from "firebase/database";
 import { database } from "../../../firebase";
+import { setChatRoom } from "../../../features/chat/chatSlice";
 
 const MainPanel = () => {
   const {
@@ -23,8 +24,10 @@ const MainPanel = () => {
     handleSubmit,
     reset,
   } = useForm();
-  const [showModal, setShowModal] = useState(false);
   const user = useSelector((state) => state.user.currentUser);
+  const chatRooms = useSelector((state) => state.chat);
+  const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
 
   const openModal = () => {
     setShowModal(true);
@@ -35,9 +38,11 @@ const MainPanel = () => {
 
   const onSubmit = (data) => {
     addChatRoom(data);
+    setShowModal(false);
     reset((values) => ({ ...values, title: "", desc: "" }));
   };
 
+  // 채팅방 생성
   const addChatRoom = async (data) => {
     let key = push(child(ref(database), "chatRooms")).key;
     const newChatRoom = {
@@ -49,12 +54,23 @@ const MainPanel = () => {
         // image: user.photoURL
       },
     };
-
     try {
       await update(ref(database, "chatRooms/" + key), newChatRoom);
-      setShowModal(false);
-    } catch (error) {}
+    } catch (error) {
+      alert(`[addChatRoom] ${error}`);
+    }
   };
+
+  useEffect(() => {
+    // 채팅방 추가 이벤트 리스너
+    const chatRoomsRef = ref(database, "chatRooms");
+    let chatRoomsArray = [];
+    onChildAdded(chatRoomsRef, (snapshot) => {
+      chatRoomsArray = [...chatRoomsArray, snapshot.val()];
+      dispatch(setChatRoom(chatRoomsArray));
+    });
+    return () => off(chatRoomsRef, onChildAdded);
+  }, [dispatch]);
 
   return (
     <Container>
@@ -87,26 +103,23 @@ const MainPanel = () => {
         </Modal>
       </ContentTitle>
       <ContentList>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
-        <li>First room </li>
+        {chatRooms.length > 0 &&
+          chatRooms.map((room) => <li key={room.id}>{room.title}</li>)}
+        {chatRooms.length === 0 && (
+          <li className="noData">생성된 채팅이 없습니다</li>
+        )}
       </ContentList>
     </Container>
   );
 };
 
 const Container = styled(ContentLayout)`
-  li {
-    padding: 10px 20px;
+  div.loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 const Control = styled.div`

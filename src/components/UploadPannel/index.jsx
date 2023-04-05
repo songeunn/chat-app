@@ -8,7 +8,7 @@ const UploadPannel = () => {
   const dispatch = useDispatch();
 
   const handleUploadImage = async (e) => {
-    inputOpenImageRef.current.click();
+    // inputOpenImageRef.current.click();
     const file = e.target.files[0];
     if (!file) return;
     // const metadata = { contentType: mime.lookup(file.name) };

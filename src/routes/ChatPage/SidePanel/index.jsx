@@ -70,9 +70,6 @@ const Container = styled.section`
   gap: 10px;
   padding-right: 20px;
   box-sizing: border-box;
-  li {
-    padding: 5px 10px;
-  }
 `;
 const UserInfo = styled.section`
   border: 1px solid var(--point-color);
