@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ContentTitle from "../../../components/ContentTitle";
 import ContentList from "../../../components/ContentList";
@@ -15,7 +15,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { ref, push, child, update, onChildAdded, off } from "firebase/database";
 import { database } from "../../../firebase";
-import { setChatRoom } from "../../../features/chat/chatSlice";
+import { setCurrentChatRoom } from "../../../features/chat/chatSlice";
+import { useNavigate } from "react-router-dom";
 
 const MainPanel = () => {
   const {
@@ -25,9 +26,10 @@ const MainPanel = () => {
     reset,
   } = useForm();
   const user = useSelector((state) => state.user.currentUser);
-  const chatRooms = useSelector((state) => state.chat);
-  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [chatRooms, setChatRooms] = useState([]);
 
   const openModal = () => {
     setShowModal(true);
@@ -67,10 +69,10 @@ const MainPanel = () => {
     let chatRoomsArray = [];
     onChildAdded(chatRoomsRef, (snapshot) => {
       chatRoomsArray = [...chatRoomsArray, snapshot.val()];
-      dispatch(setChatRoom(chatRoomsArray));
+      setChatRooms(chatRoomsArray);
     });
     return () => off(chatRoomsRef, onChildAdded);
-  }, [dispatch]);
+  }, []);
 
   return (
     <Container>
@@ -104,7 +106,16 @@ const MainPanel = () => {
       </ContentTitle>
       <ContentList>
         {chatRooms.length > 0 &&
-          chatRooms.map((room) => <li key={room.id}>{room.title}</li>)}
+          chatRooms.map((room) => (
+            <li
+              key={room.id}
+              onClick={() =>
+                dispatch(setCurrentChatRoom(room), navigate("/chatroom"))
+              }
+            >
+              {room.title}
+            </li>
+          ))}
         {chatRooms.length === 0 && (
           <li className="noData">생성된 채팅이 없습니다</li>
         )}

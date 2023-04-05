@@ -3,28 +3,28 @@ import App from "../App";
 import ChatPage from "./ChatPage";
 import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
+import ChatRoomPage from "./ChatRoomPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    name: "",
   },
   {
     path: "/signup",
     element: <SignupPage />,
-    name: "회원가입",
   },
   {
     path: "/login",
     element: <LoginPage />,
-    name: "로그인",
   },
-
   {
     path: "/chat",
     element: <ChatPage />,
-    name: "채팅방",
+  },
+  {
+    path: "/chatroom",
+    element: <ChatRoomPage />,
   },
 ]);
 
