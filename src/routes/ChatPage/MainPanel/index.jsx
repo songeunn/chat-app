@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ref, push, child, update, onChildAdded, off } from "firebase/database";
 import { database } from "../../../firebase";
 import { setCurrentChatRoom } from "../../../features/chat/chatSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MainPanel = () => {
   const {
@@ -107,14 +107,11 @@ const MainPanel = () => {
       <ContentList>
         {chatRooms.length > 0 &&
           chatRooms.map((room) => (
-            <li
-              key={room.id}
-              onClick={() =>
-                dispatch(setCurrentChatRoom(room), navigate("/chatroom"))
-              }
-            >
-              {room.title}
-            </li>
+            <Link to={`/chatroom/${room.id}`} key={room.id}>
+              <li onClick={() => dispatch(setCurrentChatRoom(room))}>
+                {room.title}
+              </li>
+            </Link>
           ))}
         {chatRooms.length === 0 && (
           <li className="noData">생성된 채팅이 없습니다</li>

@@ -36,27 +36,16 @@ const SidePanel = () => {
       <Favorite>
         <ContentTitle>Favorite</ContentTitle>
         <ContentList>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
+          <li>모니터 팔아요</li>
+          <li>채팅방123</li>
+          <li>명수짤 모음</li>
         </ContentList>
       </Favorite>
       <DirectMessage>
         <ContentTitle>Direct Message</ContentTitle>
         <ContentList>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
-          <li>First romms</li>
+          <li>라우리엘</li>
+          <li>니나브</li>
         </ContentList>
       </DirectMessage>
     </Container>

@@ -2,21 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import Layout from "../../components/Layout";
 import styled from "styled-components";
 import { ErrorMsg, Input } from "../../components/Inline";
-import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { database } from "../../firebase";
-import { push, ref, set } from "firebase/database";
+import { off, onChildAdded, push, ref } from "firebase/database";
 import { useSelector } from "react-redux";
 import { serverTimestamp } from "firebase/database";
+import ChatHeader from "./ChatHeader";
+import { useParams } from "react-router-dom";
+import Message from "./Message";
 
 const ChatRoomPage = () => {
   const { handleSubmit, register, reset } = useForm();
-  const navigate = useNavigate();
   const chatRoomInfo = useSelector((state) => state.chat);
   const user = useSelector((state) => state.user.currentUser);
+  const { id } = useParams();
+  const scrollRef = useRef();
 
   const [errors, setErrors] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState({
+    messages: [],
+    messageLoading: true,
+  });
 
   const createMessage = (content, fileUrl = null) => {
     const message = {
@@ -37,50 +43,54 @@ const ChatRoomPage = () => {
   };
 
   const onSubmit = async (data) => {
-    if (!data.chatInput || loading) {
-      setErrors("빈칸");
+    // Firebase에 메시지 저장
+    if (!data.chatInput) {
+      setErrors("empty");
       return;
     }
-    setLoading(true);
-    // Firebase에 메시지 저장
     try {
       await push(
         ref(database, "messages/" + chatRoomInfo.id),
         createMessage(data)
       );
-      setLoading(false);
       setErrors("");
     } catch (error) {
       setErrors(error.message);
-      setLoading(false);
       setTimeout(() => {
         setErrors("");
       }, 3000);
     }
-
     reset((values) => ({ ...values, chatInput: "" }));
+  };
+
+  useEffect(() => {
+    // 메시지 추가 이벤트 리스너
+    const messagesRef = ref(database, "messages/" + id);
+    let messagesArray = [];
+    onChildAdded(messagesRef, (snapshot) => {
+      messagesArray = [...messagesArray, snapshot.val()];
+      setMessages({ messages: messagesArray, messageLoading: false });
+    });
+
+    // 채팅방 스크롤 위치 최하단으로 조정
+    setTimeout(() => {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }, 10);
+    return () => off(messagesRef, onChildAdded);
+  }, [chatRoomInfo, id]);
+
+  const renderMessages = (messages) => {
+    return messages.messages.map((msg) => (
+      <Message key={msg.timestamp} message={msg} user={msg.user} />
+    ));
   };
 
   return (
     <Layout>
       <Wrapper>
-        <ChatHeader>
-          <Info>
-            <h2>{chatRoomInfo && chatRoomInfo.title}</h2>
-            <p>{chatRoomInfo && chatRoomInfo.description}</p>
-          </Info>
-          <Control>
-            <button className="search" />
-            <button className="exit" onClick={() => navigate("/chat")} />
-          </Control>
-        </ChatHeader>
-        <ChatContainer>
-          <Message>
-            <You>모코코</You>: 케케켘ㅋㅋㅋㅋㅋㅋㅋㅋㅋ
-          </Message>
-          <Message>
-            <Me>태태</Me>: 케케켘ㅋㅋㅋㅋㅋㅋㅋㅋㅋ
-          </Message>
+        <ChatHeader chatRoomInfo={chatRoomInfo} />
+        <ChatContainer ref={scrollRef}>
+          {renderMessages(messages)}
         </ChatContainer>
         <ChatInputContainer>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -88,11 +98,11 @@ const ChatRoomPage = () => {
               placeholder="채팅을 입력해주세요"
               {...register("chatInput")}
             />
-            <button>전송</button>
+            <button type="submit">전송</button>
           </form>
           {errors && (
             <ErrorMsg>
-              {errors === "빈칸"
+              {errors === "empty"
                 ? ""
                 : "메시지 전송에 실패했습니다. 다시 시도해주세요"}
             </ErrorMsg>
@@ -110,59 +120,20 @@ const Wrapper = styled.section`
   flex-direction: column;
 `;
 
-const ChatHeader = styled.div`
-  flex: 1;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-`;
-const Info = styled.div`
-  h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-  p {
-    font-size: 14px;
-  }
-`;
-const Control = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  button.search {
-    background: url("images/search.png") center center no-repeat;
-    background-size: contain;
-    width: 17px;
-    height: 17px;
-  }
-  button.exit {
-    background: url("images/exit.png") center center no-repeat;
-    background-size: contain;
-    width: 30px;
-    height: 30px;
-  }
-`;
-
 const ChatContainer = styled.ul`
   flex: 9;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
+  overflow-y: scroll;
   gap: 12px;
-  overflow: scroll;
+  &::before {
+    content: "";
+    display: block;
+    flex: 1 1 auto;
+  }
 `;
-const Message = styled.li`
-  display: block;
-  font-size: 14px;
-`;
-const Me = styled.span`
-  background: var(--point-color);
-  color: black;
-  padding-inline: 3px;
-`;
-const You = styled.span``;
-
 const ChatInputContainer = styled.div`
   flex: 1;
   border-top: 1px solid var(--point-color);
