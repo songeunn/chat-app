@@ -7,7 +7,7 @@ import { auth } from "./firebase";
 import { useDispatch } from "react-redux";
 import { setUser } from "./features/user/userSlice";
 
-const App = (props) => {
+const App = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

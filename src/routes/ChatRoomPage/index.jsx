@@ -10,6 +10,7 @@ import { serverTimestamp } from "firebase/database";
 import ChatHeader from "./ChatHeader";
 import { useParams } from "react-router-dom";
 import Message from "./Message";
+import Loading from "../../components/Loading";
 
 const ChatRoomPage = () => {
   const { handleSubmit, register, reset } = useForm();
@@ -23,8 +24,10 @@ const ChatRoomPage = () => {
     messages: [],
     messageLoading: true,
   });
+  const isLoading = messages.messageLoading;
 
   const createMessage = (content, fileUrl = null) => {
+    // 메시지 정보
     const message = {
       timestamp: serverTimestamp(),
       user: {
@@ -43,7 +46,7 @@ const ChatRoomPage = () => {
   };
 
   const onSubmit = async (data) => {
-    // Firebase에 메시지 저장
+    // Firebase에 메시지 저장(전송)
     if (!data.chatInput) {
       setErrors("empty");
       return;
@@ -54,6 +57,7 @@ const ChatRoomPage = () => {
         createMessage(data)
       );
       setErrors("");
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     } catch (error) {
       setErrors(error.message);
       setTimeout(() => {
@@ -90,7 +94,7 @@ const ChatRoomPage = () => {
       <Wrapper>
         <ChatHeader chatRoomInfo={chatRoomInfo} />
         <ChatContainer ref={scrollRef}>
-          {renderMessages(messages)}
+          {isLoading ? <Loading /> : renderMessages(messages)}
         </ChatContainer>
         <ChatInputContainer>
           <form onSubmit={handleSubmit(onSubmit)}>

@@ -16,7 +16,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { ref, push, child, update, onChildAdded, off } from "firebase/database";
 import { database } from "../../../firebase";
 import { setCurrentChatRoom } from "../../../features/chat/chatSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import Loading from "../../../components/Loading";
 
 const MainPanel = () => {
   const {
@@ -27,9 +28,9 @@ const MainPanel = () => {
   } = useForm();
   const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [chatRooms, setChatRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const openModal = () => {
     setShowModal(true);
@@ -62,7 +63,6 @@ const MainPanel = () => {
       alert(`[addChatRoom] ${error}`);
     }
   };
-
   useEffect(() => {
     // 채팅방 추가 이벤트 리스너
     const chatRoomsRef = ref(database, "chatRooms");
@@ -70,6 +70,7 @@ const MainPanel = () => {
     onChildAdded(chatRoomsRef, (snapshot) => {
       chatRoomsArray = [...chatRoomsArray, snapshot.val()];
       setChatRooms(chatRoomsArray);
+      setLoading(false);
     });
     return () => off(chatRoomsRef, onChildAdded);
   }, []);
@@ -105,31 +106,29 @@ const MainPanel = () => {
         </Modal>
       </ContentTitle>
       <ContentList>
-        {chatRooms.length > 0 &&
-          chatRooms.map((room) => (
-            <Link to={`/chatroom/${room.id}`} key={room.id}>
-              <li onClick={() => dispatch(setCurrentChatRoom(room))}>
-                {room.title}
-              </li>
-            </Link>
-          ))}
-        {chatRooms.length === 0 && (
-          <li className="noData">생성된 채팅이 없습니다</li>
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            {chatRooms.length > 0 &&
+              chatRooms.map((room) => (
+                <Link to={`/chatroom/${room.id}`} key={room.id}>
+                  <li onClick={() => dispatch(setCurrentChatRoom(room))}>
+                    {room.title}
+                  </li>
+                </Link>
+              ))}
+            {chatRooms.length === 0 && (
+              <li className="noData">생성된 채팅이 없습니다</li>
+            )}
+          </>
         )}
       </ContentList>
     </Container>
   );
 };
 
-const Container = styled(ContentLayout)`
-  div.loading {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-`;
+const Container = styled(ContentLayout)``;
 const Control = styled.div`
   z-index: 5;
   position: absolute;
@@ -146,7 +145,6 @@ const Control = styled.div`
     background-size: contain;
   }
 `;
-
 const ModalContent = styled.section`
   width: 100%;
   height: 100%;

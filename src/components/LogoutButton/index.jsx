@@ -4,13 +4,16 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useDispatch } from "react-redux";
 import { clearUser } from "../../features/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const LogoutButton = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(clearUser());
     signOut(auth);
+    navigate("/");
   };
   return <Button onClick={handleLogout}>로그아웃</Button>;
 };

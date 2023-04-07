@@ -10,11 +10,12 @@ const ContentList = ({ children }) => {
 };
 
 const ListContainer = styled.section`
-  margin-top: 10px;
   font-size: 14px;
+  height: 100%;
   ul {
     display: flex;
     flex-direction: column;
+    height: 100%;
     li {
       cursor: pointer;
       padding: 7px 10px;

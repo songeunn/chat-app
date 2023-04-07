@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import LogoutButton from "../../../components/LogoutButton";
 import ContentList from "../../../components/ContentList";
@@ -7,18 +7,10 @@ import ContentLayout from "../../../components/ContentLayout";
 import { useSelector } from "react-redux";
 import Dropdown from "../../../components/Dropdown";
 import DropdownItem from "../../../components/DropdownItem";
-import { useNavigate } from "react-router-dom";
 
 const SidePanel = () => {
-  const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
-
-  useEffect(() => {
-    if (!currentUser) {
-      navigate("/");
-    }
-  }, [currentUser, navigate]);
 
   return (
     <Container>
@@ -36,9 +28,9 @@ const SidePanel = () => {
       <Favorite>
         <ContentTitle>Favorite</ContentTitle>
         <ContentList>
-          <li>모니터 팔아요</li>
-          <li>채팅방123</li>
-          <li>명수짤 모음</li>
+          <li>React 스터디방</li>
+          <li>TypeScript 질문</li>
+          <li>NextJS 업데이트</li>
         </ContentList>
       </Favorite>
       <DirectMessage>

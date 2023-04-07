@@ -39,13 +39,13 @@ const Control = styled.div`
   align-items: center;
   gap: 10px;
   button.search {
-    background: url("images/search.png") center center no-repeat;
+    background: url("/images/search.png") center center no-repeat;
     background-size: contain;
     width: 17px;
     height: 17px;
   }
   button.exit {
-    background: url("images/exit.png") center center no-repeat;
+    background: url("/images/exit.png") center center no-repeat;
     background-size: contain;
     width: 30px;
     height: 30px;
