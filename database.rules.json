@@ -1,0 +1,46 @@
+{
+  "rules": {
+		"chatRooms": {
+      ".read": "auth !== null",
+        "$chatRoomId": {
+          ".write": "auth != null",
+          ".validate": "newData.hasChildren(['id', 'title', 'createdBy'])",
+          "id": {
+            ".validate": "newData.val() === $chatRoomId"
+          },
+          "title": {
+            ".validate": "newData.val().length > 0"
+          },
+          // "description": {
+          //   ".validate": "newData.val().length > 0"
+          // }
+        }
+    },
+    "messages": {
+      ".read": "auth !== null",
+      ".write": "auth !== null",
+      "content": {
+        ".validate": "newData.val().length > 0"
+      },
+      "image": {
+        ".validate": "newData.val().length > 0"
+      },
+			"user": {
+        ".validate": "newData.hasChildren(['id', 'name', 'image'])"
+      }
+    },
+    "users": {
+      ".read": "auth !== null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name', 'avatar'])",
+        "name": {
+          ".validate": "newData.val().length > 0"
+        },
+        "avatar": {
+          ".validate": "newData.val().length > 0"
+        }
+      }
+    }
+  }
+}

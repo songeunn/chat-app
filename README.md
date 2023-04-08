@@ -2,6 +2,8 @@
 
 ## 프로젝트 실행
 
+[🚀 배포 바로 보러가기](https://song-chat-app.web.app/)
+
 ```bash
 yarn install
 yarn start
