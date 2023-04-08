@@ -38,7 +38,7 @@ const LoginPage = () => {
       setLoading(false);
       setTimeout(() => {
         setErrorFromSubmit("");
-      }, 5000);
+      }, 3000);
     }
   };
 
@@ -67,14 +67,11 @@ const LoginPage = () => {
               placeholder="비밀번호"
               {...register("password", { required: true, minLength: 6 })}
             />
-            {errors.password && errors.password.type === "required" && (
-              <span className="error">비밀번호를 입력해주세요</span>
-            )}
-            {errors.password && errors.password.type === "minLength" && (
-              <span className="error">
-                비밀번호는 최소 6자 이상이어야 합니다
-              </span>
-            )}
+            {!errorFromSubmit &&
+              errors.password &&
+              errors.password.type === "required" && (
+                <span className="error">비밀번호를 입력해주세요</span>
+              )}
 
             {/* 로그인 실패 */}
             {errorFromSubmit && (notUser || wrongPw) && (

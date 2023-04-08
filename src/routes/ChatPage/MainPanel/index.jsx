@@ -4,7 +4,7 @@ import ContentTitle from "../../../components/ContentTitle";
 import ContentList from "../../../components/ContentList";
 import ContentLayout from "../../../components/ContentLayout";
 import Modal from "../../../components/Modal";
-import { FilledButton } from "../../../components/Button";
+import { FilledButton, OutlinedButton } from "../../../components/Button";
 import { useForm } from "react-hook-form";
 import {
   ErrorMsg,
@@ -29,8 +29,8 @@ const MainPanel = () => {
   const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
-  const [chatRooms, setChatRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [chatRooms, setChatRooms] = useState([""]);
+  const [loading, setLoading] = useState(false);
 
   const openModal = () => {
     setShowModal(true);
@@ -67,13 +67,17 @@ const MainPanel = () => {
     // 채팅방 추가 이벤트 리스너
     const chatRoomsRef = ref(database, "chatRooms");
     let chatRoomsArray = [];
+    setChatRooms([]);
     onChildAdded(chatRoomsRef, (snapshot) => {
+      setLoading(true);
       chatRoomsArray = [...chatRoomsArray, snapshot.val()];
       setChatRooms(chatRoomsArray);
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     });
     return () => off(chatRoomsRef, onChildAdded);
-  }, []);
+  }, [chatRooms.length]);
 
   return (
     <Container>
@@ -100,7 +104,12 @@ const MainPanel = () => {
               {errors.title && errors.title.type === "required" && (
                 <ErrorMsg>제목을 입력해주세요</ErrorMsg>
               )}
-              <FilledButton type="submit">생성</FilledButton>
+              <div className="buttons">
+                <OutlinedButton onClick={closeModal} type="button">
+                  취소
+                </OutlinedButton>
+                <FilledButton type="submit">생성</FilledButton>
+              </div>
             </form>
           </ModalContent>
         </Modal>
@@ -119,7 +128,7 @@ const MainPanel = () => {
                 </Link>
               ))}
             {chatRooms.length === 0 && (
-              <li className="noData">생성된 채팅이 없습니다</li>
+              <span className="noData">생성된 채팅이 없습니다</span>
             )}
           </>
         )}
@@ -137,7 +146,6 @@ const Control = styled.div`
   padding: 10px;
   border-radius: 50px;
   background-color: black;
-
   button {
     width: 20px;
     height: 20px;
@@ -148,7 +156,7 @@ const Control = styled.div`
 const ModalContent = styled.section`
   width: 100%;
   height: 100%;
-  padding: 10px;
+  padding: 15px;
   box-sizing: border-box;
   text-align: center;
   form {
@@ -158,6 +166,10 @@ const ModalContent = styled.section`
     justify-content: center;
     align-items: center;
     gap: 10px;
+    div.buttons {
+      display: flex;
+      gap: 10px;
+    }
   }
 `;
 export default MainPanel;

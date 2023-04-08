@@ -14,17 +14,21 @@ import Loading from "../../components/Loading";
 
 const ChatRoomPage = () => {
   const { handleSubmit, register, reset } = useForm();
-  const chatRoomInfo = useSelector((state) => state.chat);
-  const user = useSelector((state) => state.user.currentUser);
   const { id } = useParams();
   const scrollRef = useRef();
+  const chatRoomInfo = useSelector((state) => state.chat);
+  const user = useSelector((state) => state.user.currentUser);
+  const isSearching = useSelector((state) => state.search);
 
   const [errors, setErrors] = useState("");
   const [messages, setMessages] = useState({
     messages: [],
-    messageLoading: true,
+    messageLoading: false,
   });
-  const isLoading = messages.messageLoading;
+  const [searchResults, setSearchResults] = useState({
+    results: [],
+    searchLoading: false,
+  });
 
   const createMessage = (content, fileUrl = null) => {
     // 메시지 정보
@@ -67,11 +71,31 @@ const ChatRoomPage = () => {
     reset((values) => ({ ...values, chatInput: "" }));
   };
 
+  const handleSearchMessages = (searchTerm) => {
+    setSearchResults({ searchLoading: true });
+    // 메시지 검색
+    if (!messages.messageLoading) {
+      const chatRoomMessages = [messages.messages];
+      const regex = new RegExp(searchTerm, "gi");
+      const searchResults = chatRoomMessages[0].reduce((acc, message) => {
+        if (
+          (message.content && message.content.chatInput.match(regex)) ||
+          message.user.name.match(regex)
+        ) {
+          acc.push(message);
+        }
+        return acc;
+      }, []);
+      setSearchResults({ results: searchResults, searchLoading: false });
+    }
+  };
+
   useEffect(() => {
     // 메시지 추가 이벤트 리스너
     const messagesRef = ref(database, "messages/" + id);
     let messagesArray = [];
     onChildAdded(messagesRef, (snapshot) => {
+      setMessages({ messageLoading: true });
       messagesArray = [...messagesArray, snapshot.val()];
       setMessages({ messages: messagesArray, messageLoading: false });
     });
@@ -80,11 +104,12 @@ const ChatRoomPage = () => {
     setTimeout(() => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }, 10);
+
     return () => off(messagesRef, onChildAdded);
   }, [chatRoomInfo, id]);
 
   const renderMessages = (messages) => {
-    return messages.messages.map((msg) => (
+    return messages.map((msg) => (
       <Message key={msg.timestamp} message={msg} user={msg.user} />
     ));
   };
@@ -92,9 +117,18 @@ const ChatRoomPage = () => {
   return (
     <Layout>
       <Wrapper>
-        <ChatHeader chatRoomInfo={chatRoomInfo} />
+        <ChatHeader
+          chatRoomInfo={chatRoomInfo}
+          handleSearchMessages={handleSearchMessages}
+        />
         <ChatContainer ref={scrollRef}>
-          {isLoading ? <Loading /> : renderMessages(messages)}
+          {messages.messageLoading ? (
+            <Loading />
+          ) : isSearching ? (
+            renderMessages(searchResults.results)
+          ) : (
+            renderMessages(messages.messages)
+          )}
         </ChatContainer>
         <ChatInputContainer>
           <form onSubmit={handleSubmit(onSubmit)}>

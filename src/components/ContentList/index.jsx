@@ -19,13 +19,17 @@ const ListContainer = styled.section`
     li {
       cursor: pointer;
       padding: 7px 10px;
-      &.noData {
-        text-align: center;
-      }
+
       &:hover {
         background-color: var(--point-color);
         color: black;
       }
+    }
+    .noData {
+      height: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 `;

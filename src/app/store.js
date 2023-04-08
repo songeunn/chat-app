@@ -5,10 +5,14 @@ import sessionStorage from "redux-persist/es/storage/session";
 import persistReducer from "redux-persist/es/persistReducer";
 import persistStore from "redux-persist/es/persistStore";
 import { combineReducers } from "@reduxjs/toolkit";
+import searchSlice from "../features/search/searchSlice";
+import loadingSlice from "../features/loading/loadingSlice";
 
 const rootReducer = combineReducers({
   user: userSlice,
   chat: chatSlice,
+  search: searchSlice,
+  loading: loadingSlice,
 });
 
 const persistConfig = {

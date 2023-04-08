@@ -7,7 +7,7 @@ const Modal = ({ showModal, closeModal, children }) => {
       {showModal ? (
         <Background onClick={closeModal}>
           <ModalContainer onClick={(e) => e.stopPropagation()}>
-            <CloseIcon onClick={closeModal} />
+            {/* <CloseIcon onClick={closeModal()} /> */}
             {children}
           </ModalContainer>
         </Background>
@@ -33,7 +33,8 @@ const ModalContainer = styled.div`
   transform: translate(-50%, -50%);
 
   width: 300px;
-  height: 200px;
+  /* height: 200px; */
+  height: fit-content;
   background-color: black;
   border: 1px solid var(--point-color);
   color: var(--point-color);
@@ -43,15 +44,15 @@ const ModalContainer = styled.div`
   }
 `;
 
-const CloseIcon = styled.button`
-  position: absolute;
-  top: 15px;
-  right: 10px;
-  width: 15px;
-  height: 15px;
-  background: url("/images/close.png") center center no-repeat;
-  background-size: contain;
-  cursor: pointer;
-`;
+// const CloseIcon = styled.button`
+//   position: absolute;
+//   top: 15px;
+//   right: 10px;
+//   width: 15px;
+//   height: 15px;
+//   background: url("/images/close.png") center center no-repeat;
+//   background-size: contain;
+//   cursor: pointer;
+// `;
 
 export default Modal;

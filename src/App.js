@@ -2,9 +2,10 @@ import React, { useEffect } from "react";
 import Layout from "./components/Layout";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
+
+import { useDispatch } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
-import { useDispatch } from "react-redux";
 import { setUser } from "./features/user/userSlice";
 
 const App = () => {
@@ -15,8 +16,8 @@ const App = () => {
     onAuthStateChanged(auth, (user) => {
       // 로그인된 유저
       if (user) {
-        navigate("/chat");
         dispatch(setUser(user));
+        navigate("/chat");
       } else {
         navigate("/");
       }

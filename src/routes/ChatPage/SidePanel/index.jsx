@@ -1,24 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import LogoutButton from "../../../components/LogoutButton";
 import ContentList from "../../../components/ContentList";
 import ContentTitle from "../../../components/ContentTitle";
 import ContentLayout from "../../../components/ContentLayout";
-import { useSelector } from "react-redux";
 import Dropdown from "../../../components/Dropdown";
 import DropdownItem from "../../../components/DropdownItem";
+import { useSelector } from "react-redux";
 
 const SidePanel = () => {
   const [active, setActive] = useState(false);
-  const { currentUser } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.currentUser);
 
   return (
     <Container>
       <UserInfo onClick={() => setActive(!active)}>
-        <>
-          {/* <img src={currentUser && currentUser.photoURL} alt="avatar" /> */}
-          {currentUser && currentUser.displayName}▾
-        </>
+        <img src={user.photoURL} alt="avatar" />
+        {user.displayName}▾
         <Dropdown active={active}>
           <DropdownItem>
             <LogoutButton />
@@ -27,18 +25,11 @@ const SidePanel = () => {
       </UserInfo>
       <Favorite>
         <ContentTitle>Favorite</ContentTitle>
-        <ContentList>
-          <li>React 스터디방</li>
-          <li>TypeScript 질문</li>
-          <li>NextJS 업데이트</li>
-        </ContentList>
+        <ContentList></ContentList>
       </Favorite>
       <DirectMessage>
         <ContentTitle>Direct Message</ContentTitle>
-        <ContentList>
-          <li>라우리엘</li>
-          <li>니나브</li>
-        </ContentList>
+        <ContentList></ContentList>
       </DirectMessage>
     </Container>
   );
