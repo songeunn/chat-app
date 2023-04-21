@@ -17,7 +17,7 @@ const Message = ({ message, user }) => {
     <MessageContainer>
       <SpaceBetween>
         <Chat>
-          <img src={user.image} alt="아바타" />
+          <img src={user.image} alt="avatar" />
           <UserName isSendByMe={isSendByMe(message)}>{user.name}</UserName>:
           {message.content.chatInput}
         </Chat>

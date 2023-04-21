@@ -11,6 +11,9 @@ const Item = styled.li`
     background-color: var(--point-color);
     color: black;
   }
+  button:hover {
+    color: black;
+  }
 `;
 
 export default DropdownItem;

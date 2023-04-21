@@ -120,8 +120,8 @@ const MainPanel = () => {
         ) : (
           <>
             {chatRooms.length > 0 &&
-              chatRooms.map((room) => (
-                <Link to={`/chatroom/${room.id}`} key={room.id}>
+              chatRooms.map((room, idx) => (
+                <Link to={`/chatroom/${room.id}`} key={idx}>
                   <li onClick={() => dispatch(setCurrentChatRoom(room))}>
                     {room.title}
                   </li>

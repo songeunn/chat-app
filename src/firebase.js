@@ -5,6 +5,7 @@ import "firebase/auth";
 import "firebase/database";
 import { getDatabase } from "firebase/database";
 import "firebase/storage";
+import { getStorage } from "firebase/storage";
 
 // import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -29,3 +30,4 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const database = getDatabase(app);
+export const storage = getStorage(app);
