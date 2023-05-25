@@ -36,10 +36,8 @@ const SidePanel = () => {
       const storageRef = ref(storage, "user_image/" + user.uid);
 
       // 1. 스토리지에 업로드한 이미지 파일 저장하기 + 저장된 파일의 URL 가져오기
-      let uploadTaskSnapshot = await uploadBytes(storageRef, file, metadata);
-      const downloadURL = await getDownloadURL(
-        ref(storage, uploadTaskSnapshot.ref)
-      );
+      let uploadTask = await uploadBytes(storageRef, file, metadata);
+      const downloadURL = await getDownloadURL(ref(storage, uploadTask.ref));
 
       // 2. Auth 서비스에 유저 정보 업데이트 시켜주기
       updateProfile(user, {

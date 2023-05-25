@@ -3,7 +3,7 @@ import Layout from "../../components/Layout";
 import styled from "styled-components";
 import { ErrorMsg, Input } from "../../components/Inline";
 import { useForm } from "react-hook-form";
-import { database } from "../../firebase";
+import { database, storage } from "../../firebase";
 import { off, onChildAdded, push, ref } from "firebase/database";
 import { useSelector } from "react-redux";
 import { serverTimestamp } from "firebase/database";
@@ -11,11 +11,15 @@ import ChatHeader from "./ChatHeader";
 import { useParams } from "react-router-dom";
 import Message from "./Message";
 import Loading from "../../components/Loading";
+import mime from "mime-types";
+import { getDownloadURL, uploadBytes } from "firebase/storage";
+import { ref as sRef } from "firebase/storage";
 
 const ChatRoomPage = () => {
   const { handleSubmit, register, reset } = useForm();
   const { id } = useParams();
   const scrollRef = useRef();
+  const inputOpenImageRef = useRef();
   const chatRoomInfo = useSelector((state) => state.chat);
   const user = useSelector((state) => state.user.currentUser);
   const isSearching = useSelector((state) => state.search);
@@ -30,8 +34,8 @@ const ChatRoomPage = () => {
     searchLoading: false,
   });
 
+  /** 입력된 메시지 정보 생성 */
   const createMessage = (content, fileUrl = null) => {
-    // 메시지 정보
     const message = {
       timestamp: serverTimestamp(),
       user: {
@@ -49,8 +53,37 @@ const ChatRoomPage = () => {
     return message;
   };
 
+  /** 파일 선택창 열기 */
+  const handleOpenImageRef = () => {
+    inputOpenImageRef.current.click();
+  };
+
+  /** 선택한 이미지 저장소에 업로드 및 채팅방에 전송 */
+  const handleUploadChatImage = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const filePath = `message/public/${file.name}`;
+    const metadata = { contentType: mime.lookup(file.name) };
+
+    try {
+      // 1. 파일을 먼저 스토리지에 저장하기
+      const storageRef = sRef(storage, filePath);
+      let uploadTask = await uploadBytes(storageRef, file, metadata);
+      const downloadURL = await getDownloadURL(sRef(storage, uploadTask.ref));
+
+      await push(
+        ref(database, "messages/" + chatRoomInfo.id),
+        createMessage(downloadURL)
+      );
+    } catch (error) {
+      alert("이미지 파일을 전송하는데 실패했습니다. 다시 시도해주세요.");
+      console.error(error);
+    }
+  };
+
+  /** Firebase에 메시지 저장(전송) */
   const onSubmit = async (data) => {
-    // Firebase에 메시지 저장(전송)
     if (!data.chatInput) {
       setErrors("empty");
       return;
@@ -71,13 +104,16 @@ const ChatRoomPage = () => {
     reset((values) => ({ ...values, chatInput: "" }));
   };
 
+  /** 메시지 검색 */
   const handleSearchMessages = (searchTerm) => {
     setSearchResults({ searchLoading: true });
-    // 메시지 검색
     if (!messages.messageLoading) {
-      const chatRoomMessages = [messages.messages];
+      // const chatRoomMessages = messages.messages;
+      const chatRoomMessages = messages.messages.filter(
+        (item) => item.content.chatInput
+      );
       const regex = new RegExp(searchTerm, "gi");
-      const searchResults = chatRoomMessages[0].reduce((acc, message) => {
+      const searchResults = chatRoomMessages.reduce((acc, message) => {
         if (
           (message.content && message.content.chatInput.match(regex)) ||
           message.user.name.match(regex)
@@ -108,6 +144,7 @@ const ChatRoomPage = () => {
     return () => off(messagesRef, onChildAdded);
   }, [chatRoomInfo, id]);
 
+  /** 채팅방 메시지 렌더링 */
   const renderMessages = (messages) => {
     return messages.map((msg) => (
       <Message key={msg.timestamp} message={msg} user={msg.user} />
@@ -136,6 +173,14 @@ const ChatRoomPage = () => {
               placeholder="채팅을 입력해주세요"
               {...register("chatInput")}
             />
+            <input
+              type="file"
+              accept="image/jpeg, image/png"
+              ref={inputOpenImageRef}
+              onChange={handleUploadChatImage}
+              style={{ display: "none" }}
+            />
+            <FileButton onClick={handleOpenImageRef} type="button" />
             <button type="submit">전송</button>
           </form>
           {errors && (
@@ -195,6 +240,10 @@ const ChatInputContainer = styled.div`
     font-size: 14px;
     text-align: center;
   }
+`;
+const FileButton = styled.button`
+  background: url("/images/file.png") center center no-repeat;
+  background-size: 40%;
 `;
 
 export default ChatRoomPage;

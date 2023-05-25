@@ -12,14 +12,17 @@ const Message = ({ message, user }) => {
   const isSendByMe = (message) => {
     return message.user.id === currentUser.uid;
   };
-
   return (
     <MessageContainer>
       <SpaceBetween>
         <Chat>
-          <img src={user.image} alt="avatar" />
+          <AvatarImg src={user.image} alt="avatar" />
           <UserName isSendByMe={isSendByMe(message)}>{user.name}</UserName>:
-          {message.content.chatInput}
+          {!message.content.chatInput ? (
+            <ChatImg src={message.content} alt="chatImage" />
+          ) : (
+            message.content.chatInput
+          )}
         </Chat>
         <Time>{sendedTime}</Time>
       </SpaceBetween>
@@ -38,13 +41,18 @@ const SpaceBetween = styled.div`
   justify-content: space-between;
 `;
 
-const Chat = styled.span`
+const Chat = styled.section`
   flex: 7;
-  img {
-    width: 8px;
-    height: 8px;
-    margin-right: 5px;
-  }
+  display: flex;
+  justify-content: flex-start;
+`;
+const AvatarImg = styled.img`
+  width: 8px;
+  height: 8px;
+  margin-right: 5px;
+`;
+const ChatImg = styled.img`
+  width: 50%;
 `;
 const Time = styled.span`
   flex: 3;
@@ -55,6 +63,7 @@ const Time = styled.span`
 const UserName = styled.span`
   background-color: ${(props) => props.isSendByMe && `var(--point-color)`};
   color: ${(props) => (props.isSendByMe ? "black" : ``)};
+  height: fit-content;
 `;
 
 export default Message;
